@@ -14,7 +14,7 @@ app.use(cors({
     allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization']
 }));
 
-app.post('/api/stuff', (req, res, next) => {
+app.post('/api/book', (req, res, next) => {
     delete req.body._id;
     const book = new Book({
         ...req.body,
@@ -30,6 +30,12 @@ app.get('/api/book', (req, res, next) => {
         .then(books => res.status(200).json(books))
         .catch(error => res.status(400).json({ error: error.message }));
   });
+
+app.get('/api/book/:id', (req, res, next) => {
+    Book.findOne({ _id: req.params.id })
+        .then(book => res.status(200).json(book))
+        .catch(error => res.status(404).json({ error }));
+});
 
 mongoose.connect(process.env.CONNECTION_STRING)
     .then(() => console.log('✅ Connexion à MongoDB réussie !'))
