@@ -37,6 +37,12 @@ app.get('/api/book/:id', (req, res, next) => {
         .catch(error => res.status(404).json({ error }));
 });
 
+app.put('/api/book/:id', (req, res, next) => {
+    Book.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+      .then(() => res.status(200).json({ message: 'Livre modifié !'}))
+      .catch(error => res.status(400).json({ error }));
+  });
+
 mongoose.connect(process.env.CONNECTION_STRING)
     .then(() => console.log('✅ Connexion à MongoDB réussie !'))
     .catch(err => console.error('❌ Connexion à MongoDB échouée !', err));
