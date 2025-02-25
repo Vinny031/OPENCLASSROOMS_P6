@@ -15,6 +15,7 @@ app.use(cors({
 }));
 
 app.use('/api/book', bookRoutes);
+app.use('/api/auth', userRoutes);
 
 mongoose.connect(process.env.CONNECTION_STRING)
     .then(() => console.log('✅ Connexion à MongoDB réussie !'))
