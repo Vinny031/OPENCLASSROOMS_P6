@@ -4,6 +4,7 @@ const cors = require('cors');
 require("dotenv").config({ path: ".env" });
 
 const app = express();
+const Book = require('./models/book');
 
 app.use(express.json());
 
@@ -14,10 +15,14 @@ app.use(cors({
 }));
 
 app.post('/api/stuff', (req, res, next) => {
-    console.log(req.body);
-    res.status(201).json({
-        message: 'Livre créé !'
+    delete req.body._id;
+    const book = new Book({
+        ...req.body,
     });
+
+    book.save()
+        .then(() => res.status(201).json({ message: 'Livre ajouté avec succès' }))
+        .catch(error => res.status(400).json({ error: error.message }));
 });
 
 app.get('/api/book', (req, res, next) => {
