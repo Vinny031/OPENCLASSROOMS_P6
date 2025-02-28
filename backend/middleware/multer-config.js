@@ -14,6 +14,9 @@ const storage = multer.diskStorage({
         const ext = MIME_TYPES[file.mimetype];
         cb(null, name + Date.now() + '.' + ext);
     }
-})
+});
 
-module.exports = multer({ storage }).single('image');
+// Création de l'objet upload avec la configuration de stockage
+const upload = multer({ storage: storage });
+
+module.exports = upload; 
