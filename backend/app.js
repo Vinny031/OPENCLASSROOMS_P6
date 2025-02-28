@@ -15,9 +15,10 @@ app.use(cors({
     allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization']
 }));
 
-app.use('/api/book', bookRoutes);
+app.use('/api/books', bookRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static('images'));
+app.use(express.static('public')); 
 
 mongoose.connect(process.env.CONNECTION_STRING)
     .then(() => console.log('✅ Connexion à MongoDB réussie !'))
