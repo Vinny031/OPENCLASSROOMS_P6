@@ -3,10 +3,10 @@ const fs = require('fs');
 
 exports.createBook = (req, res, next) => {
     const bookObject = JSON.parse(req.body.book);
-    delete BookObject._id;
-    delete BookObject._userId;
+    delete bookObject._id;
+    delete bookObject._userId;
     const book = new Book({
-        ...BookObject, 
+        ...bookObject, 
         _userId: req.auth.userId,
         imageUrl: req.protocol + '://' + req.get('host') + '/images/' + req.file.filename
     });
@@ -16,13 +16,13 @@ exports.createBook = (req, res, next) => {
 }
 
 exports.updateBook = (req, res, next) => {
-    const BookObject = req.file
+    const bookObject = req.file
         ? {
             ...JSON.parse(req.body.book),
             imageUrl: req.protocol + '://' + req.get('host') + '/images/' + req.file.filename
         }
         : { ...req.body };
-    delete BookObject._userId;
+    delete bookObject._userId;
     Book.findOne({ _id: req.params.id })
         .then((book) => {
             if (!book) {
@@ -31,7 +31,7 @@ exports.updateBook = (req, res, next) => {
             if (book.userId !== req.auth.userId) {
                 return res.status(401).json({ message: 'Non autorisé !' });
             }
-            Book.updateOne({ _id: req.params.id }, { ...BookObject, _id: req.params.id })
+            Book.updateOne({ _id: req.params.id }, { ...bookObject, _id: req.params.id })
                 .then(() => res.status(200).json({ message: 'Livre mit à jour.' }))
                 .catch(error => res.status(400).json({ error }));
         })
