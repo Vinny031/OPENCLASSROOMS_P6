@@ -5,6 +5,7 @@ require("dotenv").config({ path: ".env" });
 
 const app = express();
 const bookRoutes = require('./routes/book');
+console.log('Routes chargées:', bookRoutes.stack);
 const userRoutes = require('./routes/user');
 
 app.use(express.json());
