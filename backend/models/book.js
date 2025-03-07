@@ -11,7 +11,7 @@ const bookSchema = mongoose.Schema({
         userId: { type: String, required: true },
         grade: { type: Number, min: 1, max: 5, required: true }
       }],
-    averageRating: { type: Number, default: 0 }
+    averageRating: { type: Number, default: 0, required: true }
 });
 
 bookSchema.methods.updateAverageRating = function () {

@@ -37,10 +37,15 @@ exports.getOneBook = (req, res, next) => {
 // Modification d'un livre
 exports.updateBook = (req, res, next) => {
   // Prépare les nouvelles données du livre, incluant éventuellement une nouvelle image
-  const bookObject = req.file ? {
-    ...JSON.parse(req.body.book),
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-  } : { ...req.body };
+  let bookObject = { ...req.body };
+
+  // Si un fichier a été envoyé, mettez à jour l'URL de l'image
+  if (req.file) {
+    bookObject = {
+      ...bookObject,
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    };
+  }
 
   const { rating, userId } = req.body;
   delete bookObject._userId;
@@ -71,6 +76,7 @@ exports.updateBook = (req, res, next) => {
         const totalGrade = book.ratings.reduce((accumulator, currentValue) => accumulator + currentValue.grade, 0);
         book.averageRating = parseFloat((totalGrade / book.ratings.length).toFixed(1));
       }
+
       // Mise à jour du livre
       Book.updateOne({ _id: req.params.id }, { ...bookObject, _id: req.params.id })
         .then(() => {
@@ -84,7 +90,7 @@ exports.updateBook = (req, res, next) => {
         })
         .catch(error => res.status(400).json({ error: `Erreur de mise à jour: ${error.message}` }));
     })
-      .catch(error => res.status(500).json({ error: `Erreur lors de la recherche: ${error.message}` }));
+    .catch(error => res.status(500).json({ error: `Erreur lors de la recherche: ${error.message}` }));
 };
 
 exports.deleteBook = (req, res, next) => {
@@ -152,17 +158,16 @@ exports.getAllBooks = (req, res, next) => {
 exports.bestRatings = (req, res, next) => {
   console.log('Fetching best rated books');
   Book.find()
-  .sort({ averageRating: -1 })
-  .limit(5)
-  .then(books => {
-    if (!books.length) {
-      return res.status(404).json({ message: 'Aucun livre trouvé.' });
-    }
-    res.status(200).json(books);
-  })
-  .catch(error => {
-    console.error('Erreur serveur:', error);
-    res.status(500).json({ error: 'Erreur serveur, impossible de récupérer les livres' });
-  });
-
+    .sort({ averageRating: -1 })
+    .limit(5)
+    .then(books => {
+      if (!books.length) {
+        return res.status(404).json({ message: 'Aucun livre trouvé.' });
+      }
+      res.status(200).json(books);
+    })
+    .catch(error => {
+      console.error('Erreur serveur:', error);
+      res.status(500).json({ error: `Erreur serveur, impossible de récupérer les livres: ${error.message}` });
+    });
 };
